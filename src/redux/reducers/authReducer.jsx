@@ -1,5 +1,9 @@
 import { types } from "../types/types";
-
+// {
+//     name: "Edd test",
+//     lastName: "Test2134",
+//     email: "edd@test.com"
+//   }
 const initialState = {
   isLoading: false,
   userLogged: null

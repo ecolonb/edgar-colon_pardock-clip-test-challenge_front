@@ -1,7 +1,8 @@
 import { types } from "../types/types";
 
 const initialState = {
-  isLoading: true,
+  isLoading: false,
+  messageLoading: "Loading...",
   isEditingCustomer: false
 };
 
