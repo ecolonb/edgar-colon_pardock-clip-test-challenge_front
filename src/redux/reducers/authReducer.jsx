@@ -1,12 +1,9 @@
 import { types } from "../types/types";
-// {
-//     name: "Edd test",
-//     lastName: "Test2134",
-//     email: "edd@test.com"
-//   }
 const initialState = {
   isLoading: false,
-  userLogged: null
+  userLogged: null,
+  loginError: false,
+  errorMessage: ""
 };
 
 export const authReducer = (state = initialState, action = {}) => {
@@ -16,16 +13,18 @@ export const authReducer = (state = initialState, action = {}) => {
         ...state,
         isLoading: true
       };
-    case types.authLogin:
+    case types.authSetUserLogged:
       return {
         ...state,
         userLogged: action.payload
       };
-    case types.authLogout:
+    case types.authSetLoginError:
       return {
         ...state,
-        userLogged: null
+        loginError: action.payload.error,
+        errorMessage: action.payload.message
       };
+
     default:
       return state;
   }

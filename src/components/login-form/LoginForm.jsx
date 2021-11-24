@@ -1,26 +1,45 @@
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { uiSetloading } from "redux/actions/ui";
+import { useHistory, Link } from "react-router-dom";
+
 import { LockClosedIcon } from "@heroicons/react/solid";
+import { uiSetloading } from "redux/actions/ui";
+import { authSetLoginError, authSetUserLogged } from "redux/actions/auth";
+import useForm from "hooks/useForm";
+import { loginService } from "services/auth";
 
 export default function LoginForm() {
   const dispatch = useDispatch();
-  const { isLoading } = useSelector((state) => state.ui);
+  const history = useHistory();
+  const { loginError, errorMessage } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    setTimeout(() => {
-      dispatch(uiSetloading(false));
-    }, 3000);
-  }, []);
+  const [loginFormValues, handleInputChange] = useForm({
+    email: "",
+    password: ""
+  });
 
-  console.log("Isloading: ", isLoading);
-  const handleClick = () => {
-    console.log("isLoading: ", isLoading, !isLoading);
-    dispatch(uiSetloading(!isLoading));
+  const handleSubmit = async (event) => {
+    dispatch(uiSetloading(true));
+    event.preventDefault();
+    const resp = await loginService(loginFormValues);
+
+    dispatch(uiSetloading(false));
+    if (resp.ok) {
+      dispatch(authSetUserLogged(resp.user));
+      dispatch(authSetLoginError({ error: false, message: "" }));
+      sessionStorage.setItem("token", resp.token);
+      return history.push("/customers");
+    } else {
+      dispatch(authSetLoginError({ error: true, message: resp.message }));
+    }
   };
 
   return (
-    <form className="mt-8 space-y-6" action="#" method="POST">
+    <form
+      className="mt-8 space-y-6"
+      action="#"
+      method="POST"
+      onSubmit={handleSubmit}
+    >
       <input type="hidden" name="remember" defaultValue="true" />
       <div className="rounded-md shadow-sm -space-y-px">
         <div>
@@ -28,10 +47,11 @@ export default function LoginForm() {
             Email address
           </label>
           <input
-            id="email-address"
             name="email"
             type="email"
             autoComplete="email"
+            onChange={handleInputChange}
+            value={loginFormValues.email}
             required
             className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             placeholder="Email address"
@@ -42,13 +62,15 @@ export default function LoginForm() {
             Password
           </label>
           <input
-            id="password"
             name="password"
             type="password"
+            onChange={handleInputChange}
+            value={loginFormValues.password}
             autoComplete="current-password"
             required
             className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             placeholder="Password"
+            minLength="6"
           />
         </div>
       </div>
@@ -70,15 +92,19 @@ export default function LoginForm() {
         </div>
 
         <div className="text-sm">
-          <a
-            href="/"
+          <Link
+            to="/register"
             className="font-medium text-indigo-600 hover:text-indigo-500"
           >
             SignUp
-          </a>
+          </Link>
         </div>
       </div>
-
+      {loginError && (
+        <div className="flex items-center justify-center">
+          <p className="font-medium text-red-600">{errorMessage}</p>
+        </div>
+      )}
       <div>
         <button
           type="submit"

@@ -8,3 +8,8 @@ export const uiSetEditingCustomer = (e) => ({
   type: types.uiSetEditingCustomer,
   payload: e
 });
+
+export const uiSetLoginError = (e) => ({
+  type: types.authSetLoginError,
+  payload: e
+});

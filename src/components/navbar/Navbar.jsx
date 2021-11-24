@@ -1,10 +1,13 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment, useState } from "react";
-import { useSelector } from "react-redux";
+import { Fragment } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
 
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
+
+import { authSetUserLogged } from "redux/actions/auth";
+
 import "./styles.scss";
 
 const user = {
@@ -18,22 +21,26 @@ function classNames(...classes) {
 
 export default function Navbar() {
   const { userLogged } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   const history = useHistory();
-  const [currentPage, setCurrentPage] = useState(
-    history.location.pathname === "/customers"
-  );
 
   const navigation = [
     {
       name: "Customers",
       href: "/customers",
-      current: currentPage
+      current: history.location.pathname === "/customers"
     }
   ];
   const userNavigation = [
     { name: "Your Profile", href: "/profile" },
-    { name: "Sign out", href: "/login" }
+    {
+      name: "Sign out",
+      href: "/login",
+      onClick: () => {
+        dispatch(authSetUserLogged(null));
+      }
+    }
   ];
   return (
     <>
@@ -56,7 +63,6 @@ export default function Navbar() {
                         {userLogged &&
                           navigation.map((item) => (
                             <Link
-                              onClick={() => setCurrentPage(true)}
                               key={item.name}
                               to={item.href}
                               className={classNames(
@@ -117,8 +123,9 @@ export default function Navbar() {
                                     className={classNames(
                                       "block px-4 py-2 text-sm text-gray-700"
                                     )}
+                                    onClick={item.onClick}
                                   >
-                                    {userLogged.name}
+                                    {item.name}
                                   </Link>
                                 </Menu.Item>
                               ))}
@@ -130,7 +137,6 @@ export default function Navbar() {
                   </div>
                   {userLogged && (
                     <div className="-mr-2 flex md:hidden">
-                      {/* Mobile menu button */}
                       <Disclosure.Button className="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                         <span className="sr-only">Open main menu</span>
                         {open ? (

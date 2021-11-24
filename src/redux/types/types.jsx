@@ -1,9 +1,16 @@
 export const types = {
-  uiSetLoading: "UI/OpenModal",
+  uiSetLoading: "UI/SetLoading",
   uiSetEditingCustomer: "UI/CloseModal",
 
+  authSetErrorMessage: "AUTH/SetErrorMessage",
+  authSetUserLogged: "AUTH/authSetUserLogged",
+  authSetLoginError: "AUTH/SetLoginError",
   authStartLogin: "AUTH/StartLogin",
-  authLogin: "AUTH/Login",
   authStartRegister: "AUTH/StartRegister",
-  authLogout: "AUTH/Logout"
+  authLogout: "AUTH/Logout",
+
+  customerSetActive: "CUSTOMERS/SetActive",
+  customerAddNew: "CUSTOMERS/AddNew",
+  customerSetAllItems: "CUSTOMERS/SetAllItems",
+  customerSetIsEditingOrNew: "CUSTOMERS/SetIsEditing"
 };

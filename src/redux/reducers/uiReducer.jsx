@@ -9,13 +9,11 @@ const initialState = {
 export const uiReducer = (state = initialState, action = {}) => {
   switch (action.type) {
     case types.uiSetLoading:
-      console.log("action: ", action);
       return {
         ...state,
         isLoading: action.payload
       };
     case types.uiSetEditingCustomer:
-      console.log("action--->>>: ", action);
       return {
         ...state,
         isEditingCustomer: action.payload
